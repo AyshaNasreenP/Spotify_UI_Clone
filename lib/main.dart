@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterspotify/playSongs.dart';
 import 'package:flutterspotify/songs.dart';
 
 import 'correction.dart';
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Spotify',
 
-      home: Botnavi()
+      home: PlaySong()
     );
 
   }
