@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
-class PlaySong extends StatefulWidget {
-  const PlaySong({Key? key}) : super(key: key);
+class PlaySong1 extends StatefulWidget {
+  const PlaySong1({Key? key}) : super(key: key);
 
   @override
-  State<PlaySong> createState() => _PlaySongState();
+  State<PlaySong1> createState() => _PlaySong1State();
 }
 
-class _PlaySongState extends State<PlaySong> {
+class _PlaySong1State extends State<PlaySong1> {
   late AudioPlayer _audioPlayer;
   double _sliderValue = 0.0;
   int _currentSongIndex = 0;
@@ -16,10 +16,13 @@ class _PlaySongState extends State<PlaySong> {
     "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverwritten_Role_Playing_Game.mp3",
     "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
     "http://commondatastorage.googleapis.com/codeskulptor-assets/Epoq-Lepidoptera.ogg",
+    // 'assets/audio1.mp3',
+    // 'assets/audio2.mp3',
+    // 'assets/audio3.mp3',
+    // 'assets/audio4.mp3',
 
     // Add more songs as needed
   ];
-  double _playbackSpeed = 1.0; // Initial playback speed
 
   @override
   void initState() {
@@ -29,7 +32,7 @@ class _PlaySongState extends State<PlaySong> {
   }
   Future<void> _initPlayer() async {
     await _audioPlayer.setUrl(_songList[_currentSongIndex]);
-
+    //await _audioPlayer.setAsset(_songList[_currentSongIndex]);
 
     // Listen for player state changes
     _audioPlayer.playerStateStream.listen((playerState) {
@@ -47,19 +50,35 @@ class _PlaySongState extends State<PlaySong> {
       });
     });
   }
+  ///firt one
+  // Future<void> _initPlayer() async {
+  //   await _audioPlayer.setAsset('assets/audio1.mp3');
+  //   _audioPlayer.positionStream.listen((position) {
+  //     setState(() {
+  //       _sliderValue = position.inSeconds.toDouble();
+  //     });
+  //   });
+  // }
+  ///lier
+  ///27/11/2023
+  // Future<void> _initPlayer() async {
+  //   await _audioPlayer.setAsset(_songList[_currentSongIndex]);
+  //   _audioPlayer.positionStream.listen((position) {
+  //     setState(() {
+  //       _sliderValue = position.inSeconds.toDouble();
+  //     });
+  //   });
+  // }
+  ///only play or pause
+  // Future<void> _initPlayer() async {
+  //   await _audioPlayer.setAsset('assets/audio1.mp3');
+  // }
 
   @override
   void dispose() {
     _audioPlayer.dispose();
     super.dispose();
   }
-
-  String _formatDuration(Duration duration) {
-    String minutes = (duration.inMinutes % 60).toString().padLeft(2, '0');
-    String seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +101,14 @@ class _PlaySongState extends State<PlaySong> {
 
                 child: Column(
                   children: [
+                    Slider(
+                      value: _sliderValue,
+                      min: 0.0,
+                      max: _audioPlayer.duration?.inSeconds.toDouble() ?? 0.0,
+                      onChanged: (value) {
+                        _audioPlayer.seek(Duration(seconds: value.toInt()));
+                      },
+                    ),
                     // Slider(
                     //   value: _sliderValue,
                     //   min: 0.0,
@@ -90,72 +117,22 @@ class _PlaySongState extends State<PlaySong> {
                     //     _audioPlayer.seek(Duration(seconds: value.toInt()));
                     //   },
                     // ),
-                    StreamBuilder<Duration>(
-                      stream: _audioPlayer.positionStream,
-                      builder: (context, snapshot) {
-                        final position = snapshot.data ?? Duration.zero;
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Slider(
-                              value: position.inSeconds.toDouble(),
-                              min: 0.0,
-                              max: _audioPlayer.duration?.inSeconds.toDouble() ?? 0.0,
-                              onChanged: (value) {
-                                _audioPlayer.seek(Duration(seconds: value.toInt()));
-                              },
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(15, 2, 15, 8),
-                              child: Row(
-
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('${_formatDuration(position)}'),
-                                  DropdownButton<double>(
-                                    value: _playbackSpeed,
-                                    items: [0.5, 0.75, 1.0, 1.25, 1.5, 2.0]
-                                        .map<DropdownMenuItem<double>>((double value) {
-                                      return DropdownMenuItem<double>(
-                                        value: value,
-                                        child: Text('$value x'), // Display the value in the dropdown
-                                      );
-                                    }).toList(),
-                                    onChanged: (double? newValue) {
-                                      if (newValue != null) {
-                                        setState(() {
-                                          _playbackSpeed = newValue;
-                                        });
-                                        _audioPlayer.setSpeed(_playbackSpeed);
-                                      }
-                                    },
-                                    icon: null,
-                                  ),
-
-
-                                  Text(' ${_formatDuration(_audioPlayer.duration ?? Duration.zero)}'),
-                                ],
-
-
-                              ),
-                            )
-                          ],
-                        );
-
-                      },
-                    ),
-
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        //   IconButton(
+                        //   icon: Icon(Icons.play_arrow),
+                        //   onPressed: () {
+                        //     _togglePlayback();
+                        //   },
+                        // ),
                         IconButton(
                           icon: Icon(Icons.skip_previous),
                           onPressed: () {
                             _skipToPrevious();
                           },
                         ),
-                         IconButton(
+                        IconButton(
                           icon: Icon(Icons.replay_10,
                             //size: 30,
                           ),
@@ -166,7 +143,7 @@ class _PlaySongState extends State<PlaySong> {
                         IconButton(
                           icon:
                           Icon(_audioPlayer.playing ? Icons.pause_outlined: Icons.play_arrow,
-                              //size: 40
+                            //size: 40
                           ),
                           onPressed: () {
                             _togglePlayback();
@@ -174,7 +151,7 @@ class _PlaySongState extends State<PlaySong> {
                         ),
                         IconButton(
                           icon: Icon(Icons.forward_10,
-                              //size: 30
+                            //size: 30
                           ),
                           onPressed: () {
                             _skip(Duration(seconds: 10));
@@ -199,7 +176,7 @@ class _PlaySongState extends State<PlaySong> {
       ),
     );
   }
-///For play and pause
+  ///For play and pause
   Future<void> _togglePlayback() async {
     if (_audioPlayer.playing) {
       await _audioPlayer.pause();
@@ -208,7 +185,7 @@ class _PlaySongState extends State<PlaySong> {
     }
     setState(() {});
   }
-///For skip
+  ///For skip
   Future<void> _skip(Duration duration) async {
     await _audioPlayer.seek(_audioPlayer.position + duration);
   }
@@ -224,7 +201,16 @@ class _PlaySongState extends State<PlaySong> {
       setState(() {});
     }
   }
-
+  ///trying Diff method
+  // void _skipToNext() async {
+  //   if (_currentSongIndex < _songList.length - 1) {
+  //     await _audioPlayer.pause(); // Pause the current song
+  //     _currentSongIndex++;
+  //     await _audioPlayer.setUrl(_songList[_currentSongIndex]); // Set the new URL
+  //     await _audioPlayer.play(); // Play the next song
+  //     setState(() {});
+  //   }
+  // }
 
   ///Skip one song backward
   void _skipToPrevious() {
@@ -236,15 +222,15 @@ class _PlaySongState extends State<PlaySong> {
       setState(() {});
     }
   }
+///trying Diff method
+// void _skipToPrevious() async {
+//   if (_currentSongIndex > 0) {
+//     await _audioPlayer.pause(); // Pause the current song
+//     _currentSongIndex--;
+//     await _audioPlayer.setUrl(_songList[_currentSongIndex]); // Set the new URL
+//     await _audioPlayer.play(); // Play the previous song
+//     setState(() {});
+//   }
+// }
 
-  Future<void> _changePlaybackSpeed(double delta) async {
-    // Update the playback speed with a delta value
-    _playbackSpeed += delta;
-    // Ensure playback speed is within a reasonable range (0.5x to 2.0x)
-    _playbackSpeed = _playbackSpeed.clamp(0.5, 2.0);
-    // Set the new playback speed
-    await _audioPlayer.setSpeed(_playbackSpeed);
-    setState(() {});
-  }
 }
-
